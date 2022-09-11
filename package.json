@@ -1,0 +1,13 @@
+{
+  "name": "yet-another-player",
+  "version": "1.0.0",
+  "description": "Music player made with Vue and Express",
+  "engines": {
+    "node": "17.x"
+  },
+  "scripts": {
+
+  },
+  "author": "Gureev",
+  "license": "ISC"
+}
