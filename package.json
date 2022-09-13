@@ -7,12 +7,18 @@
   },
   "scripts": {
     "start": "npm run server-start",
+
     "server-dev": "cd express-server && npm run dev",
     "server-start": "cd express-server && npm run start",
+
     "client-dev": "cd vue-client && npm run dev",
     "client-start": "cd express-server && npm run preview",
     "client-build": "cd vue-client && npm run build",
-    "heroku-postbuild": "cd vue-client && npm install && npm run build",
+
+    "heroku-build-client": "cd vue-client && npm install && npm run build",
+    "heroku-build-server": "cd express-server && npm install",
+    "heroku-postbuild": "npm run heroku-build-client & npm run heroku-build-server",
+
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
