@@ -3,27 +3,27 @@ import { useQuery } from "vue-query";
 
 import { loadingMsg } from './../stores/loadingMsg.js'
 
-console.log(import.meta.env.VITE_PORT);
-const localhostURL = 'http://localhost:5000';
-const herokuURL = '';
-const currentEnv = window.location.href.includes('localhost') ? localhostURL : herokuURL;
-const rootUrl = import.meta.env.MODE === 'production' ? currentEnv : '';
+// console.log(import.meta.env.VITE_PORT);
+// const localhostURL = 'http://localhost:5000';
+// const herokuURL = '';
+// const currentEnv = window.location.href.includes('localhost') ? localhostURL : herokuURL;
+// const rootUrl = import.meta.env.MODE === 'production' ? currentEnv : '';
 
-async function fetchSong() {
-	const response = await fetch(rootUrl + '/song', {
-		mode: 'cors',
-		method: 'GET',
-		headers: { Accept: 'application/json' }
-	});
-	console.log(response);
-	return response
-}
+// async function fetchSong() {
+// 	const response = await fetch(rootUrl + '/song', {
+// 		mode: 'cors',
+// 		method: 'GET',
+// 		headers: { Accept: 'application/json' }
+// 	});
+// 	console.log(response);
+// 	return response
+// }
 
-function useSongQuery() {
-  return useQuery("song", fetchSong);
-}
+// function useSongQuery() {
+//   return useQuery("song", fetchSong);
+// }
 
-const { isLoading, isError, data, error } = useSongQuery();
+// const { isLoading, isError, data, error } = useSongQuery();
 
 function cssVars(i) {
 	return {
@@ -62,13 +62,13 @@ function keyupHandler(e) {
 		</form>
 	</div>
 
-	<div v-if="isLoading" class="waviy text-center mt-6 md:mt-10">
+	<!-- <div v-if="isLoading" class="waviy text-center mt-6 md:mt-10">
 		<span v-for="(item, index) in loadingMsg.msg" :style="cssVars(index)" class="font-extralight text-3xl md:text-4xl">
 			{{item}}
 		</span>
 	</div>
 	<div v-else-if="isError">Error: {{ error.message }}</div>
-	<div v-else>{{ data }}</div>
+	<div v-else>{{ data }}</div> -->
 </template>
 
 
