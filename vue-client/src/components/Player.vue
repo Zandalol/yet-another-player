@@ -1,7 +1,10 @@
 <script setup>
+import { onMounted } from "vue";
 import { useQuery, useIsFetching } from "vue-query";
-import { loadingMsg } from './../stores/loadingMsg.js';
 import { songQuery } from '../stores/songQuery.js';
+
+const waitingMsg = 'Ожидание⠀ввода...';
+const loadingMsg = 'Загрузка...';
 
 const isFetching = useIsFetching();
 
@@ -11,9 +14,10 @@ const currentURL = window.location.href.includes('localhost') ? localhostURL : h
 // const rootUrl = import.meta.env.MODE === 'production' ? currentURL : '';
 async function fetchSong(songQuery) {
 	if (songQuery.query === '') {
-		// console.log('songQuery.query is empty');
+		console.log('songQuery.query is empty');
 		return
 	};
+	console.group('fetching %s', currentURL + '/song/' + songQuery.query);
 	const response = await fetch(currentURL + '/song/' + songQuery.query, {
 		mode: 'cors',
 		method: 'GET',
@@ -22,6 +26,8 @@ async function fetchSong(songQuery) {
 	if (!response.ok) {
 		throw new Error('Network response was not ok')
 	};
+	console.log('success!');
+	console.groupEnd();
 	return await response.json();
 }
 
@@ -33,25 +39,34 @@ function cssVars(i) {
 	}
 };
 
-const keyupHandler = async e => {
-	if (document.getElementById("song").value) {
-		loadingMsg.loading();
-		loadingMsg.true();
-	} else {
-		loadingMsg.waiting();
-		loadingMsg.false()
+const cyrillicPattern = /^\p{Script=Cyrillic}+$/u;
+const btnHandler = async e => {
+	e.preventDefault();
+	const query = document.getElementById("song").value;
+	if (cyrillicPattern.test(query)) {
+		document.getElementById("warning").style.display = 'block';
+		setTimeout(() => {
+			document.getElementById("warning").style.display = 'none';
+		}, 3000);
+		return
 	}
+	songQuery.update(query)
 };
 
-const btnHandler = async e => {
-	e.preventDefault()
-	songQuery.update(document.getElementById("song").value)
-};
+const placeholders = [
+	'Smells Like Teen Spirit', 'The Show Must Go On', 'Bohemian Rhapsody', 'Shape of You', 'Where Is My Mind',
+	'Get Lucky', 'London Calling'
+];
+
+onMounted(() => {
+	const random = Math.floor(Math.random() * placeholders.length);
+	document.getElementById('song').placeholder = placeholders[random]
+})
 </script>
 
 
 <template>
-	<div class="pattern flex justify-center">
+	<div class="pattern flex justify-center mb-10">
 		<form class="bg-white min-w-full md:min-w-fit text-center">
 			<label for="song" class="block font-extralight text-3xl sm:px-10 md:text-4xl md:px-20 my-6 md:my-10">
 				Начните вводить
@@ -63,11 +78,10 @@ const btnHandler = async e => {
 			</label>
 
 			<div class="flex w-full">
-				<input id="song" name="song" type="text" autocomplete="off" @keyup="keyupHandler($event)"
-					placeholder="Smells Like Teen Spirit" autofocus class="w-5/6 py-2 px-2 text-3xl md:py-3 md:px-3
-					md:text-4xl font-extralight rounded-xl border-4 border-x-rose-400 border-y-white
-					hover:border-y-rose-200 focus:border-y-rose-200	text-center italic placeholder:text-rose-200
-					focus:outline-none md:mr-3"
+				<input id="song" name="song" type="text" autocomplete="off"	autofocus class="w-5/6 py-2 px-2 text-3xl
+					md:py-3 md:px-3 md:text-4xl font-extralight rounded-xl border-4 border-x-rose-400 border-y-white
+					hover:border-y-rose-200 focus:border-y-rose-200 text-center italic placeholder:text-rose-200
+					focus:outline-none md:mr-3 caret-rose-900"
 				>
 				<button @click="btnHandler($event)" class="w-1/6 rounded-xl text-3xl md:text-4xl font-extralight
 					bg-cyan-300 text-white border-4 border-cyan-300 hover:border-cyan-100"
@@ -75,11 +89,14 @@ const btnHandler = async e => {
 					Поиск
 				</button>
 			</div>
+			<p id="warning" class="text-red-500 hidden fade-in-text">
+				⚠️ Используйте только буквы латинского алфавита
+			</p>
 		</form>
 	</div>
 
-	<div v-if="!loadingMsg.status || isFetching" class="waviy text-center mt-6 md:mt-10">
-		<span v-for="(item, index) in loadingMsg.msg" :style="cssVars(index)" class="font-extralight text-3xl md:text-4xl">
+	<div v-if="isFetching" class="waviy text-center mt-6 md:mt-10">
+		<span v-for="(item, index) in loadingMsg" :style="cssVars(index)" class="font-extralight text-3xl md:text-4xl">
 			{{item}}
 		</span>
 	</div>
@@ -89,12 +106,13 @@ const btnHandler = async e => {
 	</div>
 
 	<div v-else-if="result.data.value">
-		<span>123</span>
 		{{ result.data }}
 	</div>
 
-	<div v-else>
-		Что-то пошло не так
+	<div v-else class="waviy text-center mt-6 md:mt-10">
+		<span v-for="(item, index) in waitingMsg" :style="cssVars(index)" class="font-extralight text-3xl md:text-4xl">
+			{{item}}
+		</span>
 	</div>
 </template>
 
@@ -106,7 +124,6 @@ const btnHandler = async e => {
 	animation: waviy 1s infinite;
 	animation-delay: calc(.1s * var(--i));
 }
-
 @keyframes waviy {
 
 	0%,
@@ -130,5 +147,18 @@ const btnHandler = async e => {
 		#fff;
 	background-size: 109px 109px, 109px 109px, 100% 6px, 109px 109px, 109px 109px;
 	background-position: 54px 55px, 0px 0px, 0px 0px, 0px 0px, 0px 0px;
+}
+
+.fade-in-text {
+	animation: fadeIn 1s;
+}
+@keyframes fadeIn {
+	0% {
+		opacity: 0;
+	}
+
+	100% {
+		opacity: 1;
+	}
 }
 </style>
