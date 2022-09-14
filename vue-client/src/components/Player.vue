@@ -83,7 +83,7 @@ onMounted(() => {
 					hover:border-y-rose-200 focus:border-y-rose-200 text-center italic placeholder:text-rose-200
 					focus:outline-none md:mr-3 caret-rose-900" spellcheck="false"
 				>
-				<button @click="btnHandler($event)" class="w-1/6 rounded-xl text-2xl md:text-4xl font-extralight
+				<button @click="btnHandler($event)" class="w-1/6 rounded-xl text-lg md:text-4xl font-extralight
 					bg-cyan-300 text-white border-4 border-cyan-300 hover:border-cyan-100"
 				>
 					Поиск
@@ -125,7 +125,7 @@ onMounted(() => {
 	</div>
 
 	<div v-else class="waviy text-center mt-6 md:mt-10">
-		<span v-for="(item, index) in waitingMsg" :style="cssVars(index)" class="font-extralight text-3xl md:text-4xl">
+		<span v-for="(item, index) in waitingMsg" :style="cssVars(index)" class="font-extralight text-2xl md:text-4xl">
 			{{item}}
 		</span>
 	</div>
