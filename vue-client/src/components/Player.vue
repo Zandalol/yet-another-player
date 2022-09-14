@@ -41,6 +41,10 @@ const keyupHandler = async e => {
 		loadingMsg.waiting();
 		loadingMsg.false()
 	}
+};
+
+const btnHandler = async e => {
+	e.preventDefault()
 	songQuery.update(document.getElementById("song").value)
 };
 </script>
@@ -56,14 +60,21 @@ const keyupHandler = async e => {
 					<span class="relative text-white">название</span>
 				</span>
 				песни 🦄
-
 			</label>
 
-			<input id="song" name="song" type="text" autocomplete="off" @keyup="keyupHandler($event)" placeholder="Smells Like Teen Spirit"
-				autofocus class="w-full py-2 px-2 text-3xl md:py-3 md:px-3 md:text-4xl font-extralight rounded-xl
-				border-4 border-x-rose-400 border-y-white hover:border-y-rose-200 focus:border-y-rose-200
-				text-center italic placeholder:text-rose-200 focus:outline-none"
-			>
+			<div class="flex w-full">
+				<input id="song" name="song" type="text" autocomplete="off" @keyup="keyupHandler($event)"
+					placeholder="Smells Like Teen Spirit" autofocus class="w-5/6 py-2 px-2 text-3xl md:py-3 md:px-3
+					md:text-4xl font-extralight rounded-xl border-4 border-x-rose-400 border-y-white
+					hover:border-y-rose-200 focus:border-y-rose-200	text-center italic placeholder:text-rose-200
+					focus:outline-none md:mr-3"
+				>
+				<button @click="btnHandler($event)" class="w-1/6 rounded-xl text-3xl md:text-4xl font-extralight
+					bg-cyan-300 text-white border-4 border-cyan-300 hover:border-cyan-100"
+				>
+					Поиск
+				</button>
+			</div>
 		</form>
 	</div>
 
@@ -80,6 +91,10 @@ const keyupHandler = async e => {
 	<div v-else-if="result.data.value">
 		<span>123</span>
 		{{ result.data }}
+	</div>
+
+	<div v-else>
+		Что-то пошло не так
 	</div>
 </template>
 
