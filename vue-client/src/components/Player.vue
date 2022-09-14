@@ -68,7 +68,7 @@ onMounted(() => {
 <template>
 	<div class="pattern flex justify-center mb-10">
 		<form class="bg-white min-w-full md:min-w-fit text-center">
-			<label for="song" class="block font-extralight text-3xl sm:px-10 md:text-4xl md:px-20 my-6 md:my-10">
+			<label for="song" class="block font-extralight text-2xl sm:px-10 md:text-4xl md:px-20 my-6 md:my-10">
 				Начните вводить
 				<span class="relative">
 					<span class="block absolute -inset-1 -skew-y-3 bg-pink-500" aria-hidden="true"></span>
@@ -78,12 +78,12 @@ onMounted(() => {
 			</label>
 
 			<div class="flex w-full">
-				<input id="song" name="song" type="text" autocomplete="off"	autofocus class="w-5/6 py-2 px-2 text-3xl
+				<input id="song" name="song" type="text" autocomplete="off"	autofocus class="w-5/6 py-2 px-2 text-2xl
 					md:py-3 md:px-3 md:text-4xl font-extralight rounded-xl border-4 border-x-rose-400 border-y-white
 					hover:border-y-rose-200 focus:border-y-rose-200 text-center italic placeholder:text-rose-200
 					focus:outline-none md:mr-3 caret-rose-900" spellcheck="false"
 				>
-				<button @click="btnHandler($event)" class="w-1/6 rounded-xl text-3xl md:text-4xl font-extralight
+				<button @click="btnHandler($event)" class="w-1/6 rounded-xl text-2xl md:text-4xl font-extralight
 					bg-cyan-300 text-white border-4 border-cyan-300 hover:border-cyan-100"
 				>
 					Поиск
@@ -96,7 +96,7 @@ onMounted(() => {
 	</div>
 
 	<div v-if="isFetching" class="waviy text-center mt-6 md:mt-10">
-		<span v-for="(item, index) in loadingMsg" :style="cssVars(index)" class="font-extralight text-3xl md:text-4xl">
+		<span v-for="(item, index) in loadingMsg" :style="cssVars(index)" class="font-extralight text-2xl md:text-4xl">
 			{{item}}
 		</span>
 	</div>
