@@ -1,29 +1,31 @@
 <script setup>
-import { useQuery } from "vue-query";
+import { useQuery, useIsFetching } from "vue-query";
+import { loadingMsg } from './../stores/loadingMsg.js';
+import { songQuery } from '../stores/songQuery.js';
 
-import { loadingMsg } from './../stores/loadingMsg.js'
+const isFetching = useIsFetching();
 
-console.log(import.meta.env.VITE_PORT);
-const localhostURL = 'http://localhost:5000';
-const herokuURL = '';
-const currentEnv = window.location.href.includes('localhost') ? localhostURL : herokuURL;
-const rootUrl = import.meta.env.MODE === 'production' ? currentEnv : '';
-
-async function fetchSong() {
-	const response = await fetch(rootUrl + '/song', {
+const localhostURL = 'http://localhost:' + import.meta.env.VITE_PORT;
+const herokuURL = 'https://yet-another-player.herokuapp.com';
+const currentURL = window.location.href.includes('localhost') ? localhostURL : herokuURL;
+// const rootUrl = import.meta.env.MODE === 'production' ? currentURL : '';
+async function fetchSong(songQuery) {
+	if (songQuery.query === '') {
+		// console.log('songQuery.query is empty');
+		return
+	};
+	const response = await fetch(currentURL + '/song/' + songQuery.query, {
 		mode: 'cors',
 		method: 'GET',
 		headers: { Accept: 'application/json' }
 	});
-	console.log(response);
-	return response
+	if (!response.ok) {
+		throw new Error('Network response was not ok')
+	};
+	return await response.json();
 }
 
-function useSongQuery() {
-  return useQuery("song", fetchSong);
-}
-
-const { isLoading, isError, data, error } = useSongQuery();
+const result = useQuery(['songQuery', songQuery], async () => fetchSong(songQuery), { refetchOnWindowFocus: false });
 
 function cssVars(i) {
 	return {
@@ -31,12 +33,15 @@ function cssVars(i) {
 	}
 };
 
-function keyupHandler(e) {
+const keyupHandler = async e => {
 	if (document.getElementById("song").value) {
-		loadingMsg.loading()
+		loadingMsg.loading();
+		loadingMsg.true();
 	} else {
-		loadingMsg.waiting()
+		loadingMsg.waiting();
+		loadingMsg.false()
 	}
+	songQuery.update(document.getElementById("song").value)
 };
 </script>
 
@@ -62,13 +67,20 @@ function keyupHandler(e) {
 		</form>
 	</div>
 
-	<div v-if="isLoading" class="waviy text-center mt-6 md:mt-10">
+	<div v-if="!loadingMsg.status || isFetching" class="waviy text-center mt-6 md:mt-10">
 		<span v-for="(item, index) in loadingMsg.msg" :style="cssVars(index)" class="font-extralight text-3xl md:text-4xl">
 			{{item}}
 		</span>
 	</div>
-	<div v-else-if="isError">Error: {{ error.message }}</div>
-	<div v-else>{{ data }}</div>
+
+	<div v-else-if="result.data.isError">
+		Error: {{ error.message }}
+	</div>
+
+	<div v-else-if="result.data.value">
+		<span>123</span>
+		{{ result.data }}
+	</div>
 </template>
 
 

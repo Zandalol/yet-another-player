@@ -31,18 +31,23 @@ app.listen(port, () => {
 //   }
 // })();
 
-(async () => {
+app.get('/song/:qeury', async (req, res) => {
+	console.log('Searching for %s song', req.params.qeury);
 	try {
-		// await api.init({ username: "@.", password: "" });
-		const result = await api.searchTracks("SLEEP PARALYSIS");
-		// console.log({ result });
-		// console.log(result.tracks.results[1]);
-	} catch (e) {
-		console.log(`api error ${e.message}`);
+		var songs = {songs: []};
+		const result = await api.searchTracks(req.params.qeury);
+		for (let index = 0; index < 5; index++) {
+			const element = result.tracks.results[index];
+			songs.songs.push({
+				id: element.id,
+				title: element.title,
+				artist: element.artists[0].name,
+				album: element.albums[0].title,
+				year: element.albums[0].year
+			})
+		}
+		res.json(songs);
+	} catch (error) {
+		console.log(`api error ${error.message}`);
 	}
-})();
-
-app.get('/song', (req, res) => {
-	console.log('sh');
-	res.end('sh');
 });
