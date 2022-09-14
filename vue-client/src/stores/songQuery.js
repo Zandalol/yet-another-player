@@ -5,5 +5,4 @@ export const songQuery = reactive({
 	update(qeury) {
 		this.query = qeury
 	}
-
 })

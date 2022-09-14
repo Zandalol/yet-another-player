@@ -33,11 +33,13 @@ app.listen(port, () => {
 
 app.get('/song/:qeury', async (req, res) => {
 	console.log('Searching for %s song', req.params.qeury);
+	var songs = {songs: [], error: false};
 	try {
-		var songs = {songs: []};
 		const result = await api.searchTracks(req.params.qeury);
-		for (let index = 0; index < 5; index++) {
-			const element = result.tracks.results[index];
+		const tracks = result.tracks.results;
+		const len = Object.keys(tracks).length
+		for (let index = 0; index < Math.min(5, len); index++) {
+			const element = tracks[index];
 			songs.songs.push({
 				id: element.id,
 				title: element.title,
@@ -48,6 +50,8 @@ app.get('/song/:qeury', async (req, res) => {
 		}
 		res.json(songs);
 	} catch (error) {
-		console.log(`api error ${error.message}`);
+		console.log(`ERROR: ${error.message}`);
+		songs.error = true;
+		res.json(songs)
 	}
 });

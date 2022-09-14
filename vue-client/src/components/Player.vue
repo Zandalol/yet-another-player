@@ -2,6 +2,7 @@
 import { onMounted } from "vue";
 import { useQuery, useIsFetching } from "vue-query";
 import { songQuery } from '../stores/songQuery.js';
+import Song from '@/components/Song.vue';
 
 const waitingMsg = 'Ожидание⠀ввода...';
 const loadingMsg = 'Загрузка...';
@@ -17,7 +18,7 @@ async function fetchSong(songQuery) {
 		console.log('songQuery.query is empty');
 		return
 	};
-	console.group('fetching %s', currentURL + '/song/' + songQuery.query);
+	console.log('fetching %s', currentURL + '/song/' + songQuery.query);
 	const response = await fetch(currentURL + '/song/' + songQuery.query, {
 		mode: 'cors',
 		method: 'GET',
@@ -26,8 +27,7 @@ async function fetchSong(songQuery) {
 	if (!response.ok) {
 		throw new Error('Network response was not ok')
 	};
-	console.log('success!');
-	console.groupEnd();
+	console.log('success for %s song', songQuery.query);
 	return await response.json();
 }
 
@@ -55,7 +55,7 @@ const btnHandler = async e => {
 
 const placeholders = [
 	'Smells Like Teen Spirit', 'The Show Must Go On', 'Bohemian Rhapsody', 'Shape of You', 'Where Is My Mind',
-	'Get Lucky', 'London Calling'
+	'Get Lucky'
 ];
 
 onMounted(() => {
@@ -81,7 +81,7 @@ onMounted(() => {
 				<input id="song" name="song" type="text" autocomplete="off"	autofocus class="w-5/6 py-2 px-2 text-3xl
 					md:py-3 md:px-3 md:text-4xl font-extralight rounded-xl border-4 border-x-rose-400 border-y-white
 					hover:border-y-rose-200 focus:border-y-rose-200 text-center italic placeholder:text-rose-200
-					focus:outline-none md:mr-3 caret-rose-900"
+					focus:outline-none md:mr-3 caret-rose-900" spellcheck="false"
 				>
 				<button @click="btnHandler($event)" class="w-1/6 rounded-xl text-3xl md:text-4xl font-extralight
 					bg-cyan-300 text-white border-4 border-cyan-300 hover:border-cyan-100"
@@ -105,8 +105,21 @@ onMounted(() => {
 		Error: {{ error.message }}
 	</div>
 
-	<div v-else-if="result.data.value">
-		{{ result.data }}
+	<div v-else-if="result.data.value.error">
+		<p class="text-center">Что-то пошло не так :(</p>
+		<p class="text-center">Попробуйте другой поисковой запрос</p>
+	</div>
+
+	<div v-else-if="result.data.value.songs" class="">
+		<div class="flex justify-between md:mx-10 my-2 md:my-5 px-5 md:px-10 md:text-xl">
+			<div class="font-bold text-rose-500 hover:underline">Название / исполнитель</div>
+			<div class="font-bold text-rose-500 hover:underline">Альбом / год</div>
+		</div>
+		<Song v-bind='result.data.value.songs[0]'/>
+		<Song v-bind='result.data.value.songs[1]'/>
+		<Song v-bind='result.data.value.songs[2]'/>
+		<Song v-bind='result.data.value.songs[3]'/>
+		<Song v-bind='result.data.value.songs[4]'/>
 	</div>
 
 	<div v-else class="waviy text-center mt-6 md:mt-10">
