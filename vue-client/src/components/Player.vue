@@ -105,21 +105,23 @@ onMounted(() => {
 		Error: {{ error.message }}
 	</div>
 
-	<div v-else-if="result.data.value.error">
-		<p class="text-center">Что-то пошло не так :(</p>
-		<p class="text-center">Попробуйте другой поисковой запрос</p>
-	</div>
-
-	<div v-else-if="result.data.value.songs" class="">
-		<div class="flex justify-between md:mx-10 my-2 md:my-5 px-5 md:px-10 md:text-xl">
-			<div class="font-bold text-rose-500 hover:underline">Название / исполнитель</div>
-			<div class="font-bold text-rose-500 hover:underline">Альбом / год</div>
+	<div v-else-if="result.data.value">
+		<div v-if="result.data.value.error">
+			<p class="text-center">Что-то пошло не так :(</p>
+			<p class="text-center">Попробуйте другой поисковой запрос</p>
 		</div>
-		<Song v-bind='result.data.value.songs[0]'/>
-		<Song v-bind='result.data.value.songs[1]'/>
-		<Song v-bind='result.data.value.songs[2]'/>
-		<Song v-bind='result.data.value.songs[3]'/>
-		<Song v-bind='result.data.value.songs[4]'/>
+
+		<div v-else-if="result.data.value.songs" class="">
+			<div class="flex justify-between md:mx-10 my-2 md:my-5 px-5 md:px-10 md:text-xl">
+				<div class="font-bold text-rose-500 hover:underline">Название / исполнитель</div>
+				<div class="font-bold text-rose-500 hover:underline">Альбом / год</div>
+			</div>
+			<Song v-bind='result.data.value.songs[0]' />
+			<Song v-bind='result.data.value.songs[1]' />
+			<Song v-bind='result.data.value.songs[2]' />
+			<Song v-bind='result.data.value.songs[3]' />
+			<Song v-bind='result.data.value.songs[4]' />
+		</div>
 	</div>
 
 	<div v-else class="waviy text-center mt-6 md:mt-10">
